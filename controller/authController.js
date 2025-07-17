@@ -34,15 +34,21 @@ exports.signup = async(req,res)=>{
 exports.login = async(req,res)=>
 {
 try{
-const {userName , rollNumber , password} = req.body;
-const firstName = userName.trim().split(" ")[0].toLowerCase();
-const customId = `${rollNumber}.${firstName}`;
-
-const user = await User.findById(customId);
-if(!user)
-{
+const {email  , password} = req.body;
+// const firstName = userName.trim().split(" ")[0].toLowerCase();
+// const customId = `${rollNumber}.${firstName}`;
+const user=await User.findOne({email})
+if(!user){
     return res.status(404).json({message:"User not found"});
+
 }
+
+
+// const user = await User.findById(customId);
+// if(!user)
+// {
+//     return res.status(404).json({message:"User not found"});
+// }
 const isMatch = await bcrypt.compare(password , user.password);
 if(!isMatch)
 {
