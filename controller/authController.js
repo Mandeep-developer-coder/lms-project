@@ -1,7 +1,10 @@
 const User=require("../model/user")
 const bcrypt=require("bcrypt")
 const generateToken=require("../utils/generateToken")
-exports.signup=async(req,res)=>{
+
+//signup
+
+exports.signup = async(req,res)=>{
     const {userName,fatherName,email,address,batch,course,semester,rollNumber,number,password}=req.body
     try{
         const firstName=userName.trim().split(" ")[0].toLowerCase()
@@ -25,3 +28,43 @@ exports.signup=async(req,res)=>{
     }
    
 }
+
+//login
+
+exports.login = async(req,res)=>
+{
+try{
+const {userName , rollNumber , password} = req.body;
+const firstName = userName.trim().split(" ")[0].toLowerCase();
+const customId = `${rollNumber}.${firstName}`;
+
+const user = await User.findById(customId);
+if(!user)
+{
+    return res.status(404).json({message:"User not found"});
+}
+const isMatch = await bcrypt.compare(password , user.password);
+if(!isMatch)
+{
+    return res.status(401).json({message :"Invalid Password"});
+}
+return res.status(200).json({message : "Login Successfully",
+      token: generateToken(user),
+      user: {
+        id: user._id,
+        userName: user.userName,
+        email: user.email,
+        course: user.course,
+        semester: user.semester,
+        role: user.role
+    }, success: true
+
+})
+}
+catch(error)
+{
+    console.log("Error occur while login:", error.message);
+    return res.status(500).json({message:"Internal server error"});
+}
+}
+
