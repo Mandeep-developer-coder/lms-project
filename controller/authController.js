@@ -65,6 +65,7 @@ catch(error)
 {
     console.log("Error occur while login:", error.message);
     return res.status(500).json({message:"Internal server error"});
+
 }
 }
 
