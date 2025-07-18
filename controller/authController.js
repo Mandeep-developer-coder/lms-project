@@ -24,6 +24,13 @@ exports.signup = async(req,res)=>{
     role: user.role},success:true})
     }
     catch(err){
+        if(err.code==11000){
+            const duplicateField=Object.keys(err.keyPattern)[0];
+             return res.status(400).json({
+        message: `User already exists with this ${duplicateField}`,
+        success: false
+      });
+        }
          res.status(500).json({ message: "Server error",  error: err.message,success:false });
     }
    
@@ -74,4 +81,11 @@ catch(error)
 
 }
 }
-
+// protect student pannel
+// exports.studentPage = (req, res) => {
+//   res.sendStatus(200); 
+// };
+// protect admin 
+// exports.adminDashboard = (req, res) => {
+//   res.sendStatus(200); 
+// };
